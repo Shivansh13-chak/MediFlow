@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+
+.idea/
+target/
+.git/
+
+src/main/resources/application.properties
+src/main/resources/application.properties.backup

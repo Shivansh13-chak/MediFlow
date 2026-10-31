@@ -1,0 +1,43 @@
+# Maven
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE files
+.idea/
+*.iws
+*.iml
+*.ipr
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+.vscode/
+
+# Generated files
+.apt_generated/
+build/
+dist/
+nbbuild/
+nbdist/
+.nb-gradle/
+nbproject/private/
+
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Local application configuration containing credentials
+src/main/resources/application.properties
+src/main/resources/application.properties.backup
+
+# Keep test configuration tracked
+!src/test/resources/application-test.properties
+
+# Logs and operating system files
+*.log
+logs/
+.DS_Store
+Thumbs.db
