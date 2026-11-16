@@ -43,9 +43,9 @@ The application follows a layered backend architecture:
 
 ### Prerequisites
 
-- Java 21
-- Docker Desktop
 - Git
+- Docker Desktop with Docker Compose
+- Java 21 (required for running tests locally)
 
 ### Setup
 
@@ -62,30 +62,63 @@ The application follows a layered backend architecture:
    cp .env.example .env
    ```
 
-3. Edit `.env` and provide your own database credentials and a secure JWT secret.
+   On Windows PowerShell, use:
 
-4. Build the application:
-
-   ```bash
-   docker build -t hospitalms:local .
+   ```powershell
+   Copy-Item .env.example .env
    ```
 
-5. Start the application and database:
+3. Open `.env` and configure your own values:
+
+   - `MYSQL_USER`: MySQL application username.
+   - `MYSQL_PASSWORD`: MySQL application password.
+   - `MYSQL_ROOT_PASSWORD`: MySQL root password.
+   - `JWT_SECRET`: A secure secret of at least 256 bits for HS256 signing.
+
+4. Build and start the application and database:
 
    ```bash
-   docker compose up -d
+   docker compose up --build -d
+   ```
+
+5. Verify that the containers are running:
+
+   ```bash
+   docker compose ps
    ```
 
 6. Access the backend at:
 
    `http://localhost:8080`
 
-## Testing
+7. Access Swagger UI for API documentation and testing:
 
-Run the automated test suite using:
+   `http://localhost:8080/swagger-ui/index.html`
+
+### Stopping the Application
+
+To stop the containers:
 
 ```bash
+docker compose down
+```
+
+The MySQL data is stored in a persistent Docker volume and is retained when containers are stopped.
+
+## Testing
+
+Run the automated test suite using Maven:
+
+**Windows PowerShell:**
+
+```powershell
 .\mvnw.cmd test
+```
+
+**Linux / macOS:**
+
+```bash
+./mvnw test
 ```
 
 ## Security
