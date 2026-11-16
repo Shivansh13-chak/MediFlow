@@ -7,11 +7,13 @@ import com.hsp.HospitalMS.entity.Appointment;
 import com.hsp.HospitalMS.entity.AppointmentStatus;
 import com.hsp.HospitalMS.entity.Doctor;
 import com.hsp.HospitalMS.entity.Patient;
+import com.hsp.HospitalMS.exception.ResourceNotFoundException;
 import com.hsp.HospitalMS.repository.AppointmentRepository;
 import com.hsp.HospitalMS.repository.DoctorRepository;
 import com.hsp.HospitalMS.repository.PatientRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,12 +26,12 @@ public class AppointmentServiceImpl implements AppointmentService{
     private final PatientRepository patientRepository;
     private final AppointmentRepository appointmentRepository;
 
-AppointmentServiceImpl(DoctorRepository doctorRepository,PatientRepository patientRepository,AppointmentRepository appointmentRepository)
-{
-    this.appointmentRepository=appointmentRepository;
-    this.patientRepository=patientRepository;
-    this.doctorRepository=doctorRepository;
-}
+    AppointmentServiceImpl(DoctorRepository doctorRepository,PatientRepository patientRepository,AppointmentRepository appointmentRepository)
+    {
+        this.appointmentRepository=appointmentRepository;
+        this.patientRepository=patientRepository;
+        this.doctorRepository=doctorRepository;
+    }
 
 
     @Override
@@ -40,11 +42,11 @@ AppointmentServiceImpl(DoctorRepository doctorRepository,PatientRepository patie
 
         Doctor doctor = doctorRepository
                 .findByIdForUpdate(appointmentCreateDto.getDoctorId())
-                .orElseThrow(() -> new IllegalArgumentException("DOCTOR NOT FOUND"));
+                .orElseThrow(() -> new ResourceNotFoundException("DOCTOR NOT FOUND"));
 
         Patient patient = patientRepository
                 .findByUser_Email(email)
-                .orElseThrow(() -> new IllegalArgumentException("PATIENT NOT FOUND"));
+                .orElseThrow(() -> new ResourceNotFoundException("PATIENT NOT FOUND"));
 
         boolean slotBooked = appointmentRepository
                 .existsByDoctor_IdAndAppointmentTimeAndStatus(
@@ -140,15 +142,15 @@ AppointmentServiceImpl(DoctorRepository doctorRepository,PatientRepository patie
     }
 
     @Override
-  public void statusUpdate(UUID appointmentId, String email, AppointmentStatusUpdateDto dto){
+    public void statusUpdate(UUID appointmentId, String email, AppointmentStatusUpdateDto dto){
 
-         Appointment appointment= appointmentRepository
+        Appointment appointment= appointmentRepository
                 .findById(appointmentId)
-                .orElseThrow(() -> new IllegalArgumentException("APPOINTMENT NOT FOUND"));
+                .orElseThrow(() -> new ResourceNotFoundException("APPOINTMENT NOT FOUND"));
 
         if(!appointment.getDoctor().getUser().getEmail().equals(email))
         {
-            throw new IllegalArgumentException("DOCTOR NOT AUTHORIZED");
+            throw new AccessDeniedException("DOCTOR NOT AUTHORIZED");
         }
 
         appointment.setStatus(dto.getStatus());
@@ -161,31 +163,18 @@ AppointmentServiceImpl(DoctorRepository doctorRepository,PatientRepository patie
 
         Appointment appointment = appointmentRepository
                 .findById(appointmentId)
-                .orElseThrow(() -> new IllegalArgumentException("APPOINTMENT NOT FOUND"));
+                .orElseThrow(() -> new ResourceNotFoundException("APPOINTMENT NOT FOUND"));
 
         if (!appointment.getPatient().getUser().getEmail().equals(email)) {
-            throw new IllegalArgumentException("PATIENT NOT AUTHORIZED");
+            throw new AccessDeniedException("PATIENT NOT AUTHORIZED");
         }
         if (appointment.getStatus() != AppointmentStatus.SCHEDULED) {
-            throw new IllegalArgumentException("ONLY SCHEDULED APPOINTMENTS CAN BE CANCELLED");
+            throw new IllegalStateException("ONLY SCHEDULED APPOINTMENTS CAN BE CANCELLED");
         }
         appointment.setStatus(AppointmentStatus.CANCELLED);
 
         appointmentRepository.save(appointment);
-}
+    }
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
 
         if (userRepository.existsByEmail(userSignupDto.getEmail())) {
-            throw new IllegalArgumentException("Email already exists.");
+            throw new IllegalStateException("Email already exists.");
         }
 
 
@@ -132,5 +132,4 @@ public class UserServiceImpl implements UserService {
 
 
 
-    }
-
+}

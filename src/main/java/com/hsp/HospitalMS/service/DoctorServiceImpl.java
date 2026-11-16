@@ -1,4 +1,3 @@
-
 package com.hsp.HospitalMS.service;
 
 import com.hsp.HospitalMS.dtos.doctor.DoctorCreateDto;
@@ -45,7 +44,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public void createDoctor(DoctorCreateDto doctorCreateDto) {
         if (userRepository.existsByEmail(doctorCreateDto.getEmail())) {
-            throw new IllegalArgumentException("EMAIL ALREADY EXISTS");
+            throw new IllegalStateException("EMAIL ALREADY EXISTS");
         }
 
         Role role = roleRepository.findByName(RolesName.DOCTOR)

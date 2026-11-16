@@ -1,4 +1,3 @@
-
 package com.hsp.HospitalMS.service;
 
 import com.hsp.HospitalMS.dtos.patient.PatientProfileResponseDto;
@@ -128,7 +127,7 @@ class UserServiceImplTest {
                 .thenReturn(true);
 
         assertThrows(
-                IllegalArgumentException.class,
+                IllegalStateException.class,
                 () -> userService.createuser(signupDto)
         );
 
